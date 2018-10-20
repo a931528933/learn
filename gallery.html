@@ -262,6 +262,7 @@
 
 </body>
 <script>
+    //解决requestAnimFrame在不同浏览器兼容性问题
     window.requestAnimFrame = (function () {
         return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -270,6 +271,7 @@
                 window.setTimeout(callback, 1000 / 60);
             };
     })();
+    //注册jq自定义插件
     (function ($) {
         $.fn.extend({
             'pic': function (imglist) {
@@ -293,9 +295,6 @@
                     }
                     window.requestAnimationFrame(step);
                 }
-
-
-
                 $(this).find("#right").click(function () {
                     if(lock == true){
                         return;
@@ -312,19 +311,14 @@
                     if(lock == true){
                         return;
                     }
-                    
                     if (index <= 0) {
-
                     } else {
                         lock = true;
                         index--;
                         anim((-(index + 1) * width), (-index * width), -1);
                     }
-
                 })
-
                 longlist.width(800 * imglist.length);
-
                 imglist.forEach((element, index) => {
                     var temp = "<div class=\"item pic-1\"><img class='item' src='" + imglist[index] + "'></img></div>";
                     longlist.append(temp);
@@ -332,8 +326,8 @@
             }
         })
     })(jQuery);
+    //图片轮播列表
     var imglist = ['1.jpg', '1.jpg', '1.jpg', '1.jpg', '1.jpg'];
-
     $(document).ready(function () {
         $("#pic").pic(imglist);
     })
