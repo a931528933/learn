@@ -50,6 +50,7 @@
 
 
         }
+
         .pic-1 {
             float: left;
             margin: 0px;
@@ -59,10 +60,11 @@
             filter: blur(2px);
 
         }
+
         .pic:hover {
             animation: zoom 0.3s forwards;
         }
-        
+
         @keyframes zoom {
             form {
                 transform: scale(1.0);
@@ -87,7 +89,8 @@
             font-size: 24px;
             color: white
         }
-        .glass-mask{
+
+        .glass-mask {
             width: inherit;
             height: inherit;
             position: absolute;
@@ -97,6 +100,7 @@
             line-height: 600px;
             text-align: center;
         }
+
         .mask {
             background-color: rgba(82, 82, 82, 0.344);
             text-align: center;
@@ -128,9 +132,10 @@
             top: 0px;
             left: 0px;
             background-color: rgba(90, 90, 90, 0.692);
-            
+            overflow: hidden;
         }
-        #to{
+
+        #to {
             text-decoration: none;
             color: white;
             font-size: 25px;
@@ -139,24 +144,66 @@
             border-radius: 30px;
             box-shadow: rgb(158, 158, 158) 0px 0px 20px 1px;
         }
-        #to:hover{
+
+        #to:hover {
             animation: h 0.5s forwards
         }
-        @keyframes h{
-            form{
+
+        @keyframes h {
+            form {
                 background-color: rgb(135, 224, 165);
                 color: white;
             }
-            to{
+
+            to {
                 background-color: rgb(255, 255, 255);
                 color: rgb(148, 148, 148);
             }
+        }
+
+        .btn {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(135, 224, 165);
+            color: white;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        .btn-left {
+            position: absolute;
+            top: 280px;
+            left: 20px;
+        }
+
+        .btn-right {
+            position: absolute;
+            top: 280px;
+            right: 20px;
+        }
+
+        .btn:hover {
+            animation: h 0.5s forwards
+        }
+
+        #longlist {
+            height: 600px;
+
+        }
+
+        .item {
+            width: 800px;
+            height: 600px;
+            margin: 0px;
+            padding: 0px;
+            float: left;
         }
     </style>
 </head>
 
 <body>
-
+    
     <div id="gallery">
         <div class="width-1 pic ">
             <div class="mask">Japan</div>
@@ -200,10 +247,96 @@
                 <a id="to" href="http://ioioioi.xyz">前往Xnet</a>
             </div>
     </div>
+    <br>
+    <div id="pic" class="" style="background-color: rgb(100, 100, 100);width:800px;height: 600px;padding: 0px;position: relative;">
+
+        <div class="glass">
+            <div id="longlist"></div>
+        </div>
+        <div class="glass-mask ">
+            <a id="to" href="http://ioioioi.xyz">前往Xnet</a>
+        </div>
+        <div id="left" class="btn btn-left">&lt;</div>
+        <div id="right" class="btn btn-right">&gt;</div>
+    </div>
 
 </body>
 <script>
+    window.requestAnimFrame = (function () {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            function (callback) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+    (function ($) {
+        $.fn.extend({
+            'pic': function (imglist) {
+                var longlist = $(this).find("#longlist");
+                var index = 0;
+                var width = 800;
+                var lock = false;//状态锁
+                function anim(currentX, afterX, dir) {
+                    var i = currentX;
+                    console.log(currentX, afterX);
+                    function step() {
+                        i -= dir * 20;
+                        longlist.css({ 'transform': 'translateX(' + i + 'px)' });
+                        if (i > afterX && dir == 1) {
+                            window.requestAnimationFrame(step);
+                        } else if (i < afterX && dir == -1) {
+                            window.requestAnimationFrame(step);
+                        }else{
+                            lock = false;
+                        }
+                    }
+                    window.requestAnimationFrame(step);
+                }
 
+
+
+                $(this).find("#right").click(function () {
+                    if(lock == true){
+                        return;
+                    }
+                    
+                    if (index >= imglist.length - 1) {
+                    } else {
+                        index++;
+                        lock = true;
+                        anim((-(index - 1) * width), (-index * width), 1);
+                    }
+                })
+                $(this).find("#left").click(function () {
+                    if(lock == true){
+                        return;
+                    }
+                    
+                    if (index <= 0) {
+
+                    } else {
+                        lock = true;
+                        index--;
+                        anim((-(index + 1) * width), (-index * width), -1);
+                    }
+
+                })
+
+                longlist.width(800 * imglist.length);
+
+                imglist.forEach((element, index) => {
+                    var temp = "<div class=\"item pic-1\"><img class='item' src='" + imglist[index] + "'></img></div>";
+                    longlist.append(temp);
+                });
+            }
+        })
+    })(jQuery);
+    var imglist = ['1.jpg', '1.jpg', '1.jpg', '1.jpg', '1.jpg'];
+
+    $(document).ready(function () {
+        $("#pic").pic(imglist);
+    })
 </script>
 
 </html>
